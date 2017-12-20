@@ -8,6 +8,12 @@ module Workflow
       end
 
       module InstanceMethods
+        def process_event!(name, *args)
+          self.class.transaction do
+            super(name, *args)
+          end
+        end
+
         def load_workflow_state
           read_attribute(self.class.workflow_column)
         end
