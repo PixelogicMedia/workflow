@@ -27,6 +27,10 @@ module Workflow
       @states[name.to_sym] = new_state
       @scoped_state = new_state
       @meta = meta
+      if @meta[:meta][:class].present?
+        klass = @meta[:meta][:class]
+        @scoped_state.on_entry = Proc.new {klass.new(self).on_entry}
+      end
       instance_eval(&events_and_etc) if events_and_etc
     end
 
@@ -42,12 +46,7 @@ module Workflow
     end
 
     def on_entry(&proc)
-      if @meta[:class].present?
-        klass = @meta[:class].constantize
-        @scoped_state.on_entry = Proc.new {klass.new(self).on_entry}
-      else
-        @scoped_state.on_entry = proc
-      end
+      @scoped_state.on_entry = proc
     end
 
     def on_exit(&proc)
