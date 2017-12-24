@@ -1,6 +1,6 @@
 module Workflow
   class State
-    attr_accessor :name, :events, :meta, :on_entry, :on_exit
+    attr_accessor :name, :events, :meta, :on_entry, :on_exit, :handler
     attr_reader :spec
 
     def initialize(name, spec, meta = {})

@@ -27,16 +27,23 @@ module Workflow
       @states[name.to_sym] = new_state
       @scoped_state = new_state
       @meta = meta
-      if @meta[:meta][:class].present?
-        klass = @meta[:meta][:class]
-        @scoped_state.on_entry = Proc.new {klass.new(self).on_entry}
-      end
       instance_eval(&events_and_etc) if events_and_etc
+    end
+
+    def handler(klass)
+      @scoped_state.handler = klass
+      @scoped_state.on_entry = Proc.new {klass.new(self).on_entry} if klass.method_defined?(:on_entry)
+      @scoped_state.on_exit = Proc.new {klass.new(self).on_exit} if klass.method_defined?(:on_exit)
     end
 
     def event(name, args = {}, &action)
       target = args[:transitions_to] || args[:transition_to]
       condition = args[:if]
+      handler = @scoped_state.handler
+      handler_method = "can_transition_to_#{target}?".to_sym
+      if handler.present? && handler.method_defined?(handler_method)
+        condition ||= Proc.new {|context| handler.new(context).try(handler_method)}
+      end
       raise WorkflowDefinitionError.new(
         "missing ':transitions_to' in workflow event definition for '#{name}'") \
         if target.nil?

@@ -207,7 +207,11 @@ module Workflow
 
     def run_action_callback(action_name, *args)
       action = action_name.to_sym
-      self.send(action, *args) if has_callback?(action)
+      if current_state.handler.method_defined?(action)
+        current_state.handler.new(self).send(action, *args)
+      else
+        self.send(action, *args) if has_callback?(action)
+      end
     end
 
     def run_on_entry(state, prior_state, triggering_event, *args)
