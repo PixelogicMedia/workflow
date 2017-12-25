@@ -207,7 +207,7 @@ module Workflow
 
     def run_action_callback(action_name, *args)
       action = action_name.to_sym
-      if current_state.handler.method_defined?(action)
+      if current_state.handler && current_state.handler.method_defined?(action)
         current_state.handler.new(self).send(action, *args)
       else
         self.send(action, *args) if has_callback?(action)

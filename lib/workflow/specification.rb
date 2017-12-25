@@ -32,8 +32,8 @@ module Workflow
 
     def handler(klass)
       @scoped_state.handler = klass
-      @scoped_state.on_entry = Proc.new {klass.new(self).on_entry} if klass.method_defined?(:on_entry)
-      @scoped_state.on_exit = Proc.new {klass.new(self).on_exit} if klass.method_defined?(:on_exit)
+      @scoped_state.on_entry = Proc.new {|*args| klass.new(self).on_entry(*args)} if klass.method_defined?(:on_entry)
+      @scoped_state.on_exit = Proc.new {|*args| klass.new(self).on_exit(*args)} if klass.method_defined?(:on_exit)
     end
 
     def event(name, args = {}, &action)
