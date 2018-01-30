@@ -1,10 +1,11 @@
 module Workflow
   class Event
 
-    attr_accessor :name, :transitions_to, :meta, :action, :condition
+    attr_accessor :name, :display_name, :transitions_to, :meta, :action, :condition
 
-    def initialize(name, transitions_to, condition = nil, meta = {}, &action)
+    def initialize(name, transitions_to, display_name = nil, condition = nil, meta = {}, &action)
       @name = name
+      @display_name = display_name
       @transitions_to = transitions_to.to_sym
       @meta = meta
       @action = action

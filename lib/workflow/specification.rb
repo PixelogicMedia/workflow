@@ -38,6 +38,7 @@ module Workflow
 
     def event(name, args = {}, &action)
       target = args[:transitions_to] || args[:transition_to]
+      display_name = args[:display_name]
       condition = args[:if]
       handler = @scoped_state.handler
       handler_method = "can_transition_to_#{target}?".to_sym
@@ -48,7 +49,7 @@ module Workflow
         "missing ':transitions_to' in workflow event definition for '#{name}'") \
         if target.nil?
       @scoped_state.events.push(
-        name, Workflow::Event.new(name, target, condition, (args[:meta] or {}), &action)
+        name, Workflow::Event.new(name, target, display_name, condition, (args[:meta] or {}), &action)
       )
     end
 

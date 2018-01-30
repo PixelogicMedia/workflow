@@ -40,5 +40,9 @@ module Workflow
     def to_sym
       name.to_sym
     end
+
+    def events_list
+      events.map {|k,v| {display_name: v.first.display_name, event: k} }
+    end
   end
 end
