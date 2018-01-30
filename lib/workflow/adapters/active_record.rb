@@ -9,7 +9,11 @@ module Workflow
 
       module InstanceMethods
         def process_event!(name, *args)
-          self.class.transaction do
+          if ActiveRecord::Base.connection.open_transactions.zero?
+            self.class.transaction do
+              super(name, *args)
+            end
+          else
             super(name, *args)
           end
         end
