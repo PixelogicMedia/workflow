@@ -53,6 +53,10 @@ module Workflow
       )
     end
 
+    def actions(actions_hash)
+      @scoped_state.actions = actions_hash
+    end
+
     def on_entry(&proc)
       @scoped_state.on_entry = proc
     end

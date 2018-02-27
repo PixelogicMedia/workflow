@@ -1,10 +1,11 @@
 module Workflow
   class State
-    attr_accessor :name, :events, :meta, :on_entry, :on_exit, :handler
+    attr_accessor :name, :events, :actions, :meta, :on_entry, :on_exit, :handler
     attr_reader :spec
 
     def initialize(name, spec, meta = {})
       @name, @spec, @events, @meta = name, spec, EventCollection.new, meta
+      @actions = []
     end
 
     def draw(graph)
