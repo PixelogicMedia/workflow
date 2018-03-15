@@ -10,7 +10,9 @@ module Workflow
       module InstanceMethods
         def process_event!(name, *args)
           if ::ActiveRecord::Base.connection.open_transactions.zero?
-            self.class.transaction do
+            state = self.current_state
+            self.with_lock do
+              return if self.current_state != state
               super(name, *args)
             end
           else
